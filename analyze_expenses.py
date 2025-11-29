@@ -51,11 +51,30 @@ print(f"Highest Month: {monthly_stats['Total'].idxmax()} (₼{monthly_stats['Tot
 print(f"Lowest Month: {monthly_stats['Total'].idxmin()} (₼{monthly_stats['Total'].min():,.2f})")
 
 # Chart 1: Total Spending by Category (Pie Chart)
-plt.figure(figsize=(10, 8))
+plt.figure(figsize=(14, 10))
 category_totals = df.groupby('category')['amount'].sum().sort_values(ascending=False)
-colors = sns.color_palette("husl", len(category_totals))
-plt.pie(category_totals, labels=category_totals.index, autopct='%1.1f%%',
-        startangle=90, colors=colors)
+
+# Group smaller categories (less than 2% of total) into "Other"
+total_amount = category_totals.sum()
+threshold = total_amount * 0.02  # 2% threshold
+major_categories = category_totals[category_totals >= threshold]
+other_sum = category_totals[category_totals < threshold].sum()
+
+if other_sum > 0:
+    major_categories['Other (Combined)'] = other_sum
+
+colors = sns.color_palette("husl", len(major_categories))
+
+# Create pie chart with legend instead of labels
+wedges, texts, autotexts = plt.pie(major_categories, autopct='%1.1f%%',
+                                     startangle=90, colors=colors,
+                                     pctdistance=0.85, textprops={'fontsize': 11, 'fontweight': 'bold'})
+
+# Create legend with category names and amounts
+legend_labels = [f'{cat}: ₼{val:,.0f}' for cat, val in major_categories.items()]
+plt.legend(legend_labels, loc='center left', bbox_to_anchor=(1, 0, 0.5, 1),
+          fontsize=11, frameon=True, fancybox=True, shadow=True)
+
 plt.title('Spending Distribution by Category', fontsize=16, fontweight='bold', pad=20)
 plt.tight_layout()
 plt.savefig('charts/spending_by_category.png', dpi=300, bbox_inches='tight')
@@ -263,21 +282,30 @@ plt.savefig('charts/top_transactions.png', dpi=300, bbox_inches='tight')
 plt.close()
 
 # Chart 12: Category Spending as Percentage (Donut Chart)
-plt.figure(figsize=(10, 8))
-category_pct = (category_totals / category_totals.sum()) * 100
+plt.figure(figsize=(14, 10))
+
+# Use major categories only (>2% threshold)
+category_pct = (major_categories / major_categories.sum()) * 100
 colors_donut = sns.color_palette("Set3", len(category_pct))
 
-wedges, texts, autotexts = plt.pie(category_pct, labels=category_pct.index,
-                                     autopct='%1.1f%%', startangle=90,
-                                     colors=colors_donut, pctdistance=0.85)
+# Create donut chart with percentages only
+wedges, texts, autotexts = plt.pie(category_pct, autopct='%1.1f%%',
+                                     startangle=90, colors=colors_donut,
+                                     pctdistance=0.80, textprops={'fontsize': 11, 'fontweight': 'bold'})
+
 # Draw circle for donut
-centre_circle = plt.Circle((0, 0), 0.70, fc='white')
+centre_circle = plt.Circle((0, 0), 0.65, fc='white')
 fig = plt.gcf()
 fig.gca().add_artist(centre_circle)
 
 # Add total in center
-plt.text(0, 0, f'Total:\n₼{category_totals.sum():,.0f}',
-         ha='center', va='center', fontsize=16, fontweight='bold')
+plt.text(0, 0, f'Total Spent:\n₼{category_totals.sum():,.0f}',
+         ha='center', va='center', fontsize=18, fontweight='bold')
+
+# Create legend with category names
+legend_labels = [f'{cat}' for cat in major_categories.index]
+plt.legend(legend_labels, loc='center left', bbox_to_anchor=(1, 0, 0.5, 1),
+          fontsize=11, frameon=True, fancybox=True, shadow=True)
 
 plt.title('Category Distribution (% of Total Spending)', fontsize=16,
           fontweight='bold', pad=20)
