@@ -196,32 +196,241 @@ plt.tight_layout()
 plt.savefig('charts/spending_percentiles.png', dpi=300, bbox_inches='tight')
 plt.close()
 
+# Chart 9: Year-over-Year Comparison
+if len(df['year'].unique()) > 1:
+    plt.figure(figsize=(14, 7))
+    yearly_data = df.groupby(['year', 'month'])['amount'].sum().unstack(fill_value=0)
+
+    for year in yearly_data.index:
+        plt.plot(range(1, 13), yearly_data.loc[year], marker='o', linewidth=2.5,
+                markersize=8, label=str(year), alpha=0.8)
+
+    plt.xlabel('Month', fontsize=12, fontweight='bold')
+    plt.ylabel('Total Spending (₼)', fontsize=12, fontweight='bold')
+    plt.title('Year-over-Year Monthly Spending Comparison', fontsize=16, fontweight='bold', pad=20)
+    plt.xticks(range(1, 13), ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                               'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'])
+    plt.legend(title='Year', fontsize=11, loc='best')
+    plt.grid(True, alpha=0.3)
+    plt.tight_layout()
+    plt.savefig('charts/year_over_year.png', dpi=300, bbox_inches='tight')
+    plt.close()
+
+# Chart 10: Quarterly Spending Trends
+plt.figure(figsize=(12, 6))
+df['quarter'] = df['date'].dt.to_period('Q')
+quarterly_data = df.groupby('quarter')['amount'].sum()
+quarters_str = [str(q) for q in quarterly_data.index]
+
+bars = plt.bar(range(len(quarterly_data)), quarterly_data.values,
+               color=sns.color_palette("viridis", len(quarterly_data)),
+               edgecolor='black', linewidth=1.2)
+plt.xlabel('Quarter', fontsize=12, fontweight='bold')
+plt.ylabel('Total Spending (₼)', fontsize=12, fontweight='bold')
+plt.title('Quarterly Spending Trends', fontsize=16, fontweight='bold', pad=20)
+plt.xticks(range(len(quarters_str)), quarters_str, rotation=45, ha='right')
+plt.grid(axis='y', alpha=0.3)
+
+# Add value labels
+for i, val in enumerate(quarterly_data.values):
+    plt.text(i, val, f'₼{val:,.0f}', ha='center', va='bottom',
+             fontsize=9, fontweight='bold')
+
+plt.tight_layout()
+plt.savefig('charts/quarterly_trends.png', dpi=300, bbox_inches='tight')
+plt.close()
+
+# Chart 11: Top 15 Most Expensive Transactions
+plt.figure(figsize=(12, 8))
+top_transactions = df.nlargest(15, 'amount')[['date', 'category', 'amount']].reset_index(drop=True)
+colors_top = sns.color_palette("Reds_r", len(top_transactions))
+
+bars = plt.barh(range(len(top_transactions)), top_transactions['amount'],
+                color=colors_top, edgecolor='black', linewidth=1.2)
+labels = [f"{row['category']} ({row['date'].strftime('%Y-%m-%d')})"
+          for _, row in top_transactions.iterrows()]
+plt.yticks(range(len(top_transactions)), labels, fontsize=10)
+plt.xlabel('Transaction Amount (₼)', fontsize=12, fontweight='bold')
+plt.title('Top 15 Most Expensive Transactions', fontsize=16, fontweight='bold', pad=20)
+plt.grid(axis='x', alpha=0.3)
+
+# Add value labels
+for i, val in enumerate(top_transactions['amount']):
+    plt.text(val, i, f' ₼{val:.2f}', va='center', fontsize=9, fontweight='bold')
+
+plt.tight_layout()
+plt.savefig('charts/top_transactions.png', dpi=300, bbox_inches='tight')
+plt.close()
+
+# Chart 12: Category Spending as Percentage (Donut Chart)
+plt.figure(figsize=(10, 8))
+category_pct = (category_totals / category_totals.sum()) * 100
+colors_donut = sns.color_palette("Set3", len(category_pct))
+
+wedges, texts, autotexts = plt.pie(category_pct, labels=category_pct.index,
+                                     autopct='%1.1f%%', startangle=90,
+                                     colors=colors_donut, pctdistance=0.85)
+# Draw circle for donut
+centre_circle = plt.Circle((0, 0), 0.70, fc='white')
+fig = plt.gcf()
+fig.gca().add_artist(centre_circle)
+
+# Add total in center
+plt.text(0, 0, f'Total:\n₼{category_totals.sum():,.0f}',
+         ha='center', va='center', fontsize=16, fontweight='bold')
+
+plt.title('Category Distribution (% of Total Spending)', fontsize=16,
+          fontweight='bold', pad=20)
+plt.tight_layout()
+plt.savefig('charts/category_percentage.png', dpi=300, bbox_inches='tight')
+plt.close()
+
+# Chart 13: Monthly Growth Rate
+plt.figure(figsize=(14, 6))
+monthly_growth = monthly_totals.pct_change() * 100
+colors_growth = ['green' if x > 0 else 'red' for x in monthly_growth]
+
+plt.bar(range(len(monthly_growth)), monthly_growth.values, color=colors_growth,
+        edgecolor='black', linewidth=1.2, alpha=0.7)
+plt.axhline(y=0, color='black', linestyle='-', linewidth=1.5)
+plt.xlabel('Month', fontsize=12, fontweight='bold')
+plt.ylabel('Growth Rate (%)', fontsize=12, fontweight='bold')
+plt.title('Month-over-Month Spending Growth Rate', fontsize=16, fontweight='bold', pad=20)
+plt.xticks(range(len(monthly_growth)), monthly_growth.index.astype(str), rotation=45, ha='right')
+plt.grid(axis='y', alpha=0.3)
+plt.tight_layout()
+plt.savefig('charts/growth_rate.png', dpi=300, bbox_inches='tight')
+plt.close()
+
+# Chart 14: Spending Distribution by Transaction Size
+plt.figure(figsize=(12, 6))
+bins = [0, 5, 10, 20, 50, 100, 200, 500, df['amount'].max()]
+labels = ['<₼5', '₼5-10', '₼10-20', '₼20-50', '₼50-100', '₼100-200', '₼200-500', '>₼500']
+df['amount_range'] = pd.cut(df['amount'], bins=bins, labels=labels)
+range_counts = df['amount_range'].value_counts().reindex(labels)
+
+colors_range = sns.color_palette("coolwarm", len(range_counts))
+bars = plt.bar(range(len(range_counts)), range_counts.values, color=colors_range,
+               edgecolor='black', linewidth=1.2)
+plt.xlabel('Transaction Size Range', fontsize=12, fontweight='bold')
+plt.ylabel('Number of Transactions', fontsize=12, fontweight='bold')
+plt.title('Distribution of Transactions by Amount Range', fontsize=16, fontweight='bold', pad=20)
+plt.xticks(range(len(labels)), labels, rotation=45, ha='right')
+plt.grid(axis='y', alpha=0.3)
+
+# Add value labels
+for i, val in enumerate(range_counts.values):
+    plt.text(i, val, f'{val:,}', ha='center', va='bottom', fontsize=9, fontweight='bold')
+
+plt.tight_layout()
+plt.savefig('charts/transaction_size_distribution.png', dpi=300, bbox_inches='tight')
+plt.close()
+
+# Chart 15: Average Spending by Month (Across All Years)
+plt.figure(figsize=(12, 6))
+avg_by_month = df.groupby('month')['amount'].mean()
+month_names = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+               'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
+colors_months = sns.color_palette("husl", 12)
+bars = plt.bar(range(1, 13), avg_by_month.values, color=colors_months,
+               edgecolor='black', linewidth=1.2)
+plt.xlabel('Month', fontsize=12, fontweight='bold')
+plt.ylabel('Average Transaction Amount (₼)', fontsize=12, fontweight='bold')
+plt.title('Average Transaction Amount by Month (All Years)', fontsize=16, fontweight='bold', pad=20)
+plt.xticks(range(1, 13), month_names)
+plt.grid(axis='y', alpha=0.3)
+
+# Add value labels
+for i, val in enumerate(avg_by_month.values, 1):
+    plt.text(i, val, f'₼{val:.2f}', ha='center', va='bottom', fontsize=9, fontweight='bold')
+
+plt.tight_layout()
+plt.savefig('charts/avg_spending_by_month.png', dpi=300, bbox_inches='tight')
+plt.close()
+
 print("\n" + "=" * 60)
-print("All charts created successfully in /charts folder!")
+print("All 15 charts created successfully in /charts folder!")
 print("=" * 60)
 
-# Generate insights data
+# Generate enhanced insights data
+top_15_trans = df.nlargest(15, 'amount')[['date', 'category', 'amount']]
+yearly_totals = df.groupby('year')['amount'].sum()
+quarterly_totals = df.groupby('quarter')['amount'].sum()
+
 insights = {
-    'total_spent': df['amount'].sum(),
-    'total_transactions': len(df),
-    'avg_transaction': df['amount'].mean(),
-    'top_category': category_totals.idxmax(),
-    'top_category_amount': category_totals.max(),
-    'top_category_pct': (category_totals.max() / df['amount'].sum()) * 100,
-    'monthly_avg': monthly_totals.mean(),
-    'highest_month': str(monthly_totals.idxmax()),
-    'highest_month_amount': monthly_totals.max(),
-    'lowest_month': str(monthly_totals.idxmin()),
-    'lowest_month_amount': monthly_totals.min(),
-    'most_expensive_day': daily_spending['mean'].idxmax(),
-    'most_expensive_day_avg': daily_spending['mean'].max(),
-    'small_transactions_pct': (len(df[df['amount'] < 10]) / len(df)) * 100,
-    'large_transactions_pct': (len(df[df['amount'] > 50]) / len(df)) * 100,
-    'weekday_avg': daily_spending.loc[['Monday', 'Tuesday', 'Wednesday',
-                                        'Thursday', 'Friday']]['mean'].mean(),
-    'weekend_avg': daily_spending.loc[['Saturday', 'Sunday']]['mean'].mean(),
-    'categories': category_totals.to_dict(),
-    'category_counts': df['category'].value_counts().to_dict(),
+    'currency': 'AZN (Manat)',
+    'summary': {
+        'total_spent': float(df['amount'].sum()),
+        'total_transactions': int(len(df)),
+        'avg_transaction': float(df['amount'].mean()),
+        'median_transaction': float(df['amount'].median()),
+        'date_range': {
+            'start': str(df['date'].min().date()),
+            'end': str(df['date'].max().date()),
+            'total_days': int((df['date'].max() - df['date'].min()).days)
+        }
+    },
+    'categories': {
+        'breakdown': {k: float(v) for k, v in category_totals.to_dict().items()},
+        'transaction_counts': {k: int(v) for k, v in df['category'].value_counts().to_dict().items()},
+        'top_category': str(category_totals.idxmax()),
+        'top_category_amount': float(category_totals.max()),
+        'top_category_pct': float((category_totals.max() / df['amount'].sum()) * 100),
+        'category_averages': {k: float(v) for k, v in df.groupby('category')['amount'].mean().to_dict().items()}
+    },
+    'monthly': {
+        'avg_spending': float(monthly_totals.mean()),
+        'highest_month': str(monthly_totals.idxmax()),
+        'highest_month_amount': float(monthly_totals.max()),
+        'lowest_month': str(monthly_totals.idxmin()),
+        'lowest_month_amount': float(monthly_totals.min()),
+        'avg_monthly_transactions': float(df.groupby('year_month').size().mean())
+    },
+    'yearly': {
+        'breakdown': {str(k): float(v) for k, v in yearly_totals.to_dict().items()},
+        'avg_yearly_spending': float(yearly_totals.mean())
+    },
+    'quarterly': {
+        'breakdown': {str(k): float(v) for k, v in quarterly_totals.to_dict().items()},
+        'avg_quarterly_spending': float(quarterly_totals.mean())
+    },
+    'daily_patterns': {
+        'most_expensive_day': str(daily_spending['mean'].idxmax()),
+        'most_expensive_day_avg': float(daily_spending['mean'].max()),
+        'cheapest_day': str(daily_spending['mean'].idxmin()),
+        'cheapest_day_avg': float(daily_spending['mean'].idxmin()),
+        'weekday_avg': float(daily_spending.loc[['Monday', 'Tuesday', 'Wednesday',
+                                            'Thursday', 'Friday']]['mean'].mean()),
+        'weekend_avg': float(daily_spending.loc[['Saturday', 'Sunday']]['mean'].mean())
+    },
+    'transaction_analysis': {
+        'small_transactions_pct': float((len(df[df['amount'] < 10]) / len(df)) * 100),
+        'medium_transactions_pct': float((len(df[(df['amount'] >= 10) & (df['amount'] <= 50)]) / len(df)) * 100),
+        'large_transactions_pct': float((len(df[df['amount'] > 50]) / len(df)) * 100),
+        'top_15_transactions': [
+            {
+                'date': str(row['date'].date()),
+                'category': str(row['category']),
+                'amount': float(row['amount'])
+            }
+            for _, row in top_15_trans.iterrows()
+        ]
+    },
+    'percentiles': {
+        f'{p}th': float(np.percentile(df['amount'], p))
+        for p in [10, 25, 50, 75, 90, 95, 99]
+    },
+    'savings_potential': {
+        'if_reduce_restaurant_20pct': float(category_totals.get('Restaurant', 0) * 0.20),
+        'if_reduce_coffee_30pct': float(category_totals.get('Coffee', 0) * 0.30),
+        'if_reduce_taxi_25pct': float(category_totals.get('Taxi', 0) * 0.25),
+        'total_potential_savings': float(
+            category_totals.get('Restaurant', 0) * 0.20 +
+            category_totals.get('Coffee', 0) * 0.30 +
+            category_totals.get('Taxi', 0) * 0.25
+        )
+    }
 }
 
 # Save insights to file
