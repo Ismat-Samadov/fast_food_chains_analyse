@@ -1,4 +1,4 @@
-# Your Financial Journey: Insights & Opportunities
+# Financial Journey: Insights & Opportunities
 
 > **Period Analyzed:** July 2022 - November 2025 | **Total Transactions:** 6,064
 
