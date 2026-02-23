@@ -12,6 +12,7 @@ def normalize_space(value: str) -> str:
 
 
 def extract_cards(payload: str):
+    payload = html_lib.unescape(payload)
     parts = payload.split('address_card')
     if len(parts) <= 1:
         return []

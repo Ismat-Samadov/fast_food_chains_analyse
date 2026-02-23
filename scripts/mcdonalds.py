@@ -40,16 +40,16 @@ def extract_with_bs4(payload: str):
         for desc in block.select("div.mcd-publication__text-description"):
             text = normalize_space(desc.get_text(" ", strip=True))
             text = text.replace("McDelivery®", "McDelivery")
-            if text.startswith("Ünvan:"):
-                data["address"] = text.replace("Ünvan:", "").strip()
-            elif text.startswith("Telefon nömrəsi:"):
-                data["phone"] = text.replace("Telefon nömrəsi:", "").strip()
-            elif text.startswith("İş saatları:"):
-                data["hours"] = text.replace("İş saatları:", "").strip()
-            elif text.startswith("Drive thru:"):
-                data["drive_thru"] = text.replace("Drive thru:", "").strip()
-            elif text.startswith("McDelivery:"):
-                data["mcdelivery"] = text.replace("McDelivery:", "").strip()
+            if "Ünvan:" in text:
+                data["address"] = text.split("Ünvan:", 1)[1].strip()
+            elif "Telefon nömrəsi:" in text:
+                data["phone"] = text.split("Telefon nömrəsi:", 1)[1].strip()
+            elif "İş saatları:" in text:
+                data["hours"] = text.split("İş saatları:", 1)[1].strip()
+            elif "Drive thru:" in text:
+                data["drive_thru"] = text.split("Drive thru:", 1)[1].strip()
+            elif "McDelivery:" in text:
+                data["mcdelivery"] = text.split("McDelivery:", 1)[1].strip()
 
         if any(value for value in data.values()):
             rows.append(data)
@@ -58,6 +58,7 @@ def extract_with_bs4(payload: str):
 
 
 def extract_publication_blocks(payload: str):
+    payload = html_lib.unescape(payload)
     parts = payload.split('<div class="publication">')
     if len(parts) <= 1:
         return []
