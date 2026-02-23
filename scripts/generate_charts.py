@@ -60,6 +60,40 @@ def load_data():
     return kfc, mcd, shaurma
 
 
+def classify_market(text):
+    if not text:
+        return "Unknown"
+    text = str(text).lower()
+    baku_markers = [
+        "bakı",
+        "baki",
+        "səbail",
+        "nəsimi",
+        "nərimanov",
+        "xətai",
+        "yasamal",
+        "sabunçu",
+        "nizami",
+        "binəqədi",
+        "xəzər",
+    ]
+    regional_markers = [
+        "gəncə",
+        "ganca",
+        "sumqayıt",
+        "sumqayit",
+        "lənkəran",
+        "lenkeran",
+        "xırdalan",
+        "xirdalan",
+    ]
+    if any(marker in text for marker in baku_markers):
+        return "Baku"
+    if any(marker in text for marker in regional_markers):
+        return "Regional cities"
+    return "Unknown"
+
+
 def chart_location_counts(kfc, mcd, shaurma):
     counts = pd.Series({
         "KFC": len(kfc),
@@ -152,6 +186,81 @@ def chart_kfc_opening_hours(kfc):
     plt.close(fig)
 
 
+def chart_baku_vs_regional(kfc, mcd, shaurma):
+    def build_counts(df, name):
+        series = (df.get("address", "") + " " + df.get("name", "")).astype(str)
+        counts = series.apply(classify_market).value_counts()
+        return pd.Series({
+            "Baku": counts.get("Baku", 0),
+            "Regional cities": counts.get("Regional cities", 0),
+            "Unknown": counts.get("Unknown", 0),
+        }, name=name)
+
+    data = pd.concat(
+        [
+            build_counts(kfc, "KFC"),
+            build_counts(mcd, "McDonald's"),
+            build_counts(shaurma, "Shaurma N1"),
+        ],
+        axis=1,
+    )
+
+    fig, ax = plt.subplots(figsize=(7.2, 4.6))
+    data.T.plot(kind="bar", stacked=True, ax=ax, color=["#2a9d8f", "#e9c46a", "#bcb8b1"])
+    ax.set_title("Baku vs Regional Coverage by Brand")
+    ax.set_ylabel("Number of locations")
+    ax.set_xlabel("")
+    ax.legend(title="Market", bbox_to_anchor=(1.02, 1), loc="upper left")
+    fig.tight_layout()
+    fig.savefig(CHARTS_DIR / "baku_vs_regional_by_brand.png", dpi=200)
+    plt.close(fig)
+
+
+def chart_regional_city_focus(kfc, mcd, shaurma):
+    city_markers = {
+        "Ganja": ["gəncə", "ganca"],
+        "Sumqayit": ["sumqayıt", "sumqayit"],
+        "Lankaran": ["lənkəran", "lenkeran"],
+        "Khirdalan": ["xırdalan", "xirdalan"],
+    }
+
+    def city_bucket(text):
+        if not text:
+            return None
+        text = str(text).lower()
+        for city, markers in city_markers.items():
+            if any(marker in text for marker in markers):
+                return city
+        return None
+
+    def build_series(df, name):
+        series = (df.get("address", "") + " " + df.get("name", "")).astype(str)
+        buckets = series.apply(city_bucket).dropna().value_counts()
+        return buckets.rename(name)
+
+    data = pd.concat(
+        [
+            build_series(kfc, "KFC"),
+            build_series(mcd, "McDonald's"),
+            build_series(shaurma, "Shaurma N1"),
+        ],
+        axis=1,
+    ).fillna(0)
+
+    if data.empty:
+        return
+
+    fig, ax = plt.subplots(figsize=(7.4, 4.6))
+    data.plot(kind="bar", ax=ax, color=["#d62828", "#f77f00", "#003049"])
+    ax.set_title("Regional City Coverage by Brand")
+    ax.set_ylabel("Number of locations")
+    ax.set_xlabel("")
+    ax.legend(title="Brand", bbox_to_anchor=(1.02, 1), loc="upper left")
+    fig.tight_layout()
+    fig.savefig(CHARTS_DIR / "regional_city_coverage.png", dpi=200)
+    plt.close(fig)
+
+
 def main():
     ensure_charts_dir()
     kfc, mcd, shaurma = load_data()
@@ -159,6 +268,8 @@ def main():
     chart_late_night_coverage(kfc, mcd, shaurma)
     chart_mcd_services(mcd)
     chart_kfc_opening_hours(kfc)
+    chart_baku_vs_regional(kfc, mcd, shaurma)
+    chart_regional_city_focus(kfc, mcd, shaurma)
 
 
 if __name__ == "__main__":

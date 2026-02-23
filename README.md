@@ -3,7 +3,7 @@
 This report summarizes actionable business insights from the available location datasets for KFC, McDonald’s, and Shaurma N1 in Azerbaijan. The focus is on coverage, operating hours, and service availability that can inform network strategy, staffing, and customer access decisions.
 
 ## Executive Summary
-KFC currently has the largest footprint, with McDonald’s close behind and Shaurma N1 the most concentrated. Late‑night access is a competitive differentiator across all brands, with Shaurma N1 and McDonald’s leaning heavily into after‑midnight service while KFC shows a sizable 24/7 component. McDonald’s delivery coverage is broad, while drive‑thru coverage is a clear growth lever.
+KFC currently has the largest footprint, with McDonald’s close behind and Shaurma N1 the most concentrated. Late‑night access is a competitive differentiator across all brands, with Shaurma N1 and McDonald’s leaning heavily into after‑midnight service while KFC shows a sizable 24/7 component. McDonald’s delivery coverage is broad, while drive‑thru coverage is a clear growth lever. Most locations across brands are concentrated in Baku, with selective presence in regional cities.
 
 ![Location Count by Brand](charts/location_counts_by_brand.png)
 
@@ -27,6 +27,32 @@ KFC leads with **39** locations, followed by **35** for McDonald’s and **30** 
 **Decisions this can inform**
 - Short‑term marketing and trade‑area targeting in contested districts.
 - Expansion pacing and capital allocation by brand.
+
+## Baku vs Regional Reach
+Most locations are concentrated in Baku, while regional city presence is more selective. This creates clear opportunities to expand outside the capital or to double down on Baku density depending on growth strategy.
+
+![Baku vs Regional Coverage by Brand](charts/baku_vs_regional_by_brand.png)
+
+**Why it matters**
+- Baku concentration supports operational efficiency and brand visibility, but limits growth headroom.
+- Regional markets can offer lower competition and incremental demand capture.
+
+**Decisions this can inform**
+- Whether to allocate new openings toward underserved regional cities.
+- Which brands should prioritize regional expansion versus Baku saturation.
+
+## Regional City Focus
+Among regional markets, coverage is concentrated in a small number of cities. This indicates that regional growth is currently selective rather than broad‑based.
+
+![Regional City Coverage by Brand](charts/regional_city_coverage.png)
+
+**Why it matters**
+- Over‑reliance on a few regional cities can create demand risk if local conditions soften.
+- Regional diversification improves resilience and extends brand reach.
+
+**Decisions this can inform**
+- Target the next set of high‑potential regional cities.
+- Optimize marketing spend across existing regional footprints.
 
 ## Late‑Night and 24/7 Coverage
 Late‑night availability is a strong differentiator in QSR. After‑midnight coverage is high for all three brands, with Shaurma N1 and McDonald’s especially dominant in this window. KFC stands out with a notable number of 24/7 sites.
@@ -84,4 +110,5 @@ Most KFC locations open at **09:00**, with a meaningful cluster operating from *
 2. Expand drive‑thru coverage for McDonald’s in high‑traffic areas to boost throughput and reduce wait times.
 3. Evaluate early‑morning expansion for KFC to compete more directly in breakfast occasions.
 4. Use footprint proximity to tune local promotions and trade‑area tactics, especially in zones where KFC and McDonald’s overlap.
+5. Decide whether the next wave of growth should target regional cities or deeper Baku penetration based on brand positioning.
 
