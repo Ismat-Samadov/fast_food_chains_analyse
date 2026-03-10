@@ -28,17 +28,27 @@ export default function DifficultyModal({ onStart, highScore }: Props) {
   const [mode, setMode] = useState<GameMode>('player-breaks');
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4 overflow-y-auto">
+    <div className="min-h-screen flex flex-col items-center justify-center p-4 overflow-y-auto bg-[#050010] text-white">
       {/* Title */}
       <motion.div
         initial={{ opacity: 0, y: -28 }}
         animate={{ opacity: 1, y: 0 }}
         className="text-center mb-8"
       >
-        <h1 className="text-5xl sm:text-7xl font-black tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 leading-none mb-1">
+        <h1
+          className="text-5xl sm:text-7xl font-black tracking-widest leading-none mb-1"
+          style={{
+            background: 'linear-gradient(to right, #22d3ee, #a855f7, #ec4899)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text',
+            // Fallback for browsers that don't support bg-clip text
+            color: '#22d3ee',
+          }}
+        >
           MASTERMIND
         </h1>
-        <p className="text-cyan-500/50 text-xs tracking-[0.3em] uppercase mt-2">
+        <p className="text-cyan-400 text-xs tracking-[0.3em] uppercase mt-2 opacity-60">
           Crack the Code · Beat the AI
         </p>
         {highScore > 0 && (
@@ -60,7 +70,7 @@ export default function DifficultyModal({ onStart, highScore }: Props) {
         transition={{ delay: 0.15 }}
         className="w-full max-w-md mb-5"
       >
-        <h2 className="text-cyan-500/50 text-[10px] uppercase tracking-[0.2em] mb-2 text-center">
+        <h2 className="text-cyan-400 text-[10px] uppercase tracking-[0.2em] mb-2 text-center">
           Game Mode
         </h2>
         <div className="flex gap-3">
@@ -90,7 +100,7 @@ export default function DifficultyModal({ onStart, highScore }: Props) {
         transition={{ delay: 0.25 }}
         className="w-full max-w-md mb-8"
       >
-        <h2 className="text-cyan-500/50 text-[10px] uppercase tracking-[0.2em] mb-2 text-center">
+        <h2 className="text-cyan-400 text-[10px] uppercase tracking-[0.2em] mb-2 text-center">
           Difficulty
         </h2>
         <div className="flex gap-3">
@@ -135,13 +145,13 @@ export default function DifficultyModal({ onStart, highScore }: Props) {
         transition={{ delay: 0.55 }}
         className="mt-8 text-center space-y-1"
       >
-        <p className="text-gray-700 text-[11px]">
+        <p className="text-gray-400 text-[11px]">
           <span className="text-gray-500">1–8</span> select color ·{' '}
           <span className="text-gray-500">Enter</span> submit ·{' '}
           <span className="text-gray-500">Backspace</span> remove ·{' '}
           <span className="text-gray-500">P</span> pause
         </p>
-        <p className="text-gray-700 text-[11px]">Touch: tap a color, then tap a slot</p>
+        <p className="text-gray-400 text-[11px]">Touch: tap a color, then tap a slot</p>
       </motion.div>
     </div>
   );

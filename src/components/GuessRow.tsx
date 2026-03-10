@@ -25,7 +25,7 @@ export default function GuessRow({ guess, rowIndex, codeLength, isLatest }: Prop
       }`}
     >
       {/* Row number */}
-      <span className="text-gray-600 text-xs font-mono w-5 text-right flex-shrink-0">
+      <span className="text-gray-400 text-xs font-mono w-5 text-right flex-shrink-0">
         {rowIndex + 1}
       </span>
 

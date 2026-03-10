@@ -59,17 +59,17 @@ export default function Header({
       {inGame && (
         <div className="flex items-center gap-4 sm:gap-6">
           <div className="text-center">
-            <div className="text-[9px] text-cyan-500/50 uppercase tracking-widest">Guess</div>
+            <div className="text-[9px] text-cyan-400 uppercase tracking-widest">Guess</div>
             <div className="text-cyan-300 font-mono font-bold text-sm">
               {guessCount}/{maxGuesses}
             </div>
           </div>
           <div className="text-center">
-            <div className="text-[9px] text-cyan-500/50 uppercase tracking-widest">Time</div>
+            <div className="text-[9px] text-cyan-400 uppercase tracking-widest">Time</div>
             <div className="text-cyan-300 font-mono font-bold text-sm">{fmt(time)}</div>
           </div>
           <div className="text-center">
-            <div className="text-[9px] text-cyan-500/50 uppercase tracking-widest">Score</div>
+            <div className="text-[9px] text-cyan-400 uppercase tracking-widest">Score</div>
             <div className="text-yellow-400 font-mono font-bold text-sm">{score}</div>
           </div>
         </div>

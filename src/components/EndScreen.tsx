@@ -96,7 +96,7 @@ export default function EndScreen({
           transition={{ delay: 0.42 }}
           className="mb-5"
         >
-          <p className="text-gray-600 text-[10px] uppercase tracking-widest mb-2">
+          <p className="text-gray-400 text-[10px] uppercase tracking-widest mb-2">
             The Secret Code
           </p>
           <div className="flex justify-center gap-2">

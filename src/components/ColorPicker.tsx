@@ -64,7 +64,7 @@ export default function ColorPicker({
       {/* Keyboard hint (desktop only) */}
       <div className="hidden sm:flex justify-center gap-3 mb-3">
         {colors.map((_, idx) => (
-          <span key={idx} className="text-gray-700 text-[10px] font-mono">
+          <span key={idx} className="text-gray-500 text-[10px] font-mono">
             [{idx + 1}]
           </span>
         ))}

@@ -24,7 +24,7 @@ export default function AiBreaker({ aiGuesses, playerCode, difficulty, status, o
     <div className="flex flex-col items-center gap-4 w-full max-w-sm mx-auto py-2">
       {/* Player's code display */}
       <div className="text-center">
-        <p className="text-gray-600 text-[10px] uppercase tracking-widest mb-2">Your Secret Code</p>
+        <p className="text-gray-400 text-[10px] uppercase tracking-widest mb-2">Your Secret Code</p>
         <div className="flex justify-center gap-2">
           {playerCode.slice(0, cfg.codeLength).map((color, i) => {
             const s = color ? PEG_COLOR_STYLES[color] : null;
@@ -64,7 +64,7 @@ export default function AiBreaker({ aiGuesses, playerCode, difficulty, status, o
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="text-cyan-400/50 text-xs"
+          className="text-cyan-400 text-xs"
         >
           🤖 Analysing…
         </motion.p>

@@ -22,11 +22,15 @@ html,
 body {
   height: 100%;
   overflow: hidden; /* game takes full viewport — inner elements scroll */
+  /* Force dark background and light text at the root level.
+     These declarations win over Tailwind Preflight which leaves bg transparent. */
+  background-color: #050010 !important;
+  color: #e0e0ff !important;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background-color: #050010;
+  color: #e0e0ff;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

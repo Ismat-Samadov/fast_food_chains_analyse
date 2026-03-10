@@ -114,7 +114,7 @@ export default function Board({
             key={`empty-${i}`}
             className="flex items-center gap-3 px-2 py-[6px] rounded-xl opacity-15"
           >
-            <span className="text-gray-600 text-xs font-mono w-5 text-right flex-shrink-0">
+            <span className="text-gray-500 text-xs font-mono w-5 text-right flex-shrink-0">
               {guesses.length + i + 2}
             </span>
             <div className="flex items-center gap-2">
